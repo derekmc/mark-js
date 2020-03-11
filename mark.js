@@ -1,14 +1,12 @@
 
-var assign = 
-    (typeof module === undefined? function(x){ window.MarkJS = x; } :
-                                  function(x){ module.exports = x; });
+var is_browser = (typeof module === "undefined");
+var assign = is_browser? function(x){ window.markjs = x; } :
+                         function(x){ module.exports = x; };
 
 
-(function(assign){
+(function(assign, is_browser){
 
-    module.exports = markdown;
-
-    let md_subs = [
+    var md_subs = [
         /\n(\s*)[\*\-](.*)/g, '\n<ul><li>$2</li></ul>',
         /\n+\n(?=[^#\n])/g, "\n\n<br><br>",
         /\n+\n/g, "\n",
@@ -25,13 +23,25 @@ var assign =
         /\[([^\]\n]*)\]\(([^\)\n]*)\)/g, "<a href=\"$2\">$1</a>",
     ];
 
+    assign(markdown);
+    if(is_browser){
+        window.addEventListener("load", browser_init); }
+
 
     function markdown(text){
-        for(let i=0; i<md_subs.length-1; i += 2){
-            let search = md_subs[i];
-            let replace = md_subs[i+1];
+        for(var i=0; i<md_subs.length-1; i += 2){
+            var search = md_subs[i];
+            var replace = md_subs[i+1];
             text = text.replace(search, replace); }
         return text;
     }
 
-})(assign);
+    function browser_init(){
+        var elems = document.getElementsByClassName("markdown-text");
+        for(var i=0; i<elems.length; ++i){
+            var elem = elems[i];
+            elem.innerHTML = markdown(elem.innerHTML);
+        }
+    }
+
+})(assign, is_browser);
