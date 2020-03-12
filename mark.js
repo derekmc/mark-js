@@ -1,21 +1,21 @@
 
-var is_browser = (typeof module === "undefined");
-var assign = is_browser? function(x){ window.markjs = x; } :
-                         function(x){ module.exports = x; };
 
-
-(function(assign, is_browser){
-
+(function(main){
+    var is_browser = (typeof module === "undefined");
+    var assign = is_browser? function(x){ window.markjs = x; } :
+                             function(x){ module.exports = x; };
+    main(assign, is_browser);
+})(function(assign, is_browser){
     var md_subs = [
         /\n(\s*)[\*\-](.*)/g, '\n<ul><li>$2</li></ul>',
         /\n+\n(?=[^#\n])/g, "\n\n<br><br>",
         /\n+\n/g, "\n",
-        /(\n|^)# (.*)/g, "\n<h1>$2</h1>",
-        /(\n|^)## (.*)/g, "\n<h2>$2</h2>",
-        /(\n|^)### (.*)/g, "\n<h3>$2</h3>",
-        /(\n|^)#### (.*)/g, "\n<h4>$2</h4>",
-        /(\n|^)##### (.*)/g, "\n<h5>$2</h5>",
-        /(\n|^)###### (.*)/g, "\n<h6>$2</h6>",
+        /(\n|^)# (.*)/g, "\n<h1 id=\"$2\">$2</h1>",
+        /(\n|^)## (.*)/g, "\n<h2 id=\"$2\">$2</h2>",
+        /(\n|^)### (.*)/g, "\n<h3 id=\"$2\">$2</h3>",
+        /(\n|^)#### (.*)/g, "\n<h4 id=\"$2\">$2</h4>",
+        /(\n|^)##### (.*)/g, "\n<h5 id=\"$2\">$2</h5>",
+        /(\n|^)###### (.*)/g, "\n<h6 id=\"$2\">$2</h6>",
         /__([^_\n]*)__/g, "<b>$1</b>",
         /\*\*([^_\n]*)\*\*/g, "<b>$1</b>",
         /_([^_\n]*)_/g, "<i>$1</i>",
@@ -43,5 +43,4 @@ var assign = is_browser? function(x){ window.markjs = x; } :
             elem.innerHTML = markdown(elem.innerHTML);
         }
     }
-
-})(assign, is_browser);
+})
